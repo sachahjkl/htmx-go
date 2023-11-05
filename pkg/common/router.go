@@ -13,7 +13,7 @@ func New(c config.Config) *fiber.App {
 	engine := html.New("./views", ".html")
 
 	app := fiber.New(fiber.Config{
-		Prefork:       true,
+		// Prefork:       true,
 		CaseSensitive: true,
 		// StrictRouting: true,
 		ServerHeader: "Fiber",
