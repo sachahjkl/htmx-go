@@ -27,7 +27,7 @@ FROM scratch
 # Env for our app to use
 
 ENV PORT=7883
-ENV DB_URL="./prod.db"
+ENV DB_URL="/var/db/prod.db"
 
 # Copy all the Code and stuff to compile everything
 
@@ -39,6 +39,6 @@ COPY --from=build /app/my-epic-app ./
 # Exposes port because our program listens on that port
 EXPOSE ${PORT}
 
-VOLUME [ "${DB_URL}" ]
+VOLUME [ "/var/db" ]
 
 ENTRYPOINT [ "./my-epic-app" ]
