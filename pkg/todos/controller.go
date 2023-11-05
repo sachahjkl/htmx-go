@@ -38,7 +38,7 @@ func (h handler) GetTodos(c *fiber.Ctx) error {
 
 	return c.Render("todos/index", fiber.Map{
 		"Todos": todos,
-	})
+	}, "layouts/main")
 }
 
 func (h handler) AddTodo(c *fiber.Ctx) error {
@@ -76,7 +76,7 @@ func (h handler) AddTodo(c *fiber.Ctx) error {
 func (h handler) ToggleTodo(c *fiber.Ctx) error {
 
 	id, err := c.ParamsInt("id")
-	if  err != nil {
+	if err != nil {
 		return fiber.NewError(fiber.StatusNotFound, err.Error())
 	}
 
@@ -111,7 +111,7 @@ func (h handler) ToggleTodo(c *fiber.Ctx) error {
 func (h handler) DeleteTodo(c *fiber.Ctx) error {
 
 	id, err := c.ParamsInt("id")
-	if  err != nil {
+	if err != nil {
 		return fiber.NewError(fiber.StatusNotFound, err.Error())
 	}
 
@@ -120,8 +120,6 @@ func (h handler) DeleteTodo(c *fiber.Ctx) error {
 	if result.Error != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, result.Error.Error())
 	}
-
-	
 
 	result = h.DB.Delete(&todo)
 	if result.Error != nil {

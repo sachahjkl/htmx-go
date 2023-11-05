@@ -20,7 +20,7 @@ func New(c config.Config) *fiber.App {
 		AppName:      "HTMX + Go",
 		Views:        engine,
 		// Views Layout is the global layout for all template render until override on Render function.
-		ViewsLayout: "layouts/main",
+		// ViewsLayout: "layouts/main",
 	})
 	app.Use(logger.New())
 	return app
@@ -29,6 +29,6 @@ func New(c config.Config) *fiber.App {
 func RegisterDefaultRoutes(app *fiber.App) {
 	app.Static("/", "./public")
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Render("index", fiber.Map{})
+		return c.Render("index", fiber.Map{}, "layouts/main")
 	})
 }
