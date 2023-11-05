@@ -12,10 +12,9 @@ import (
 
 func main() {
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("Error loading .env file")
-	}
+	// Try to load a potentially existing ".env" file
+	// ignore errors
+	godotenv.Load()
 
 	c, err := config.LoadConfig()
 
@@ -30,6 +29,6 @@ func main() {
 	router.RegisterDefaultRoutes(app)
 	todos.RegisterRoutes(app, db)
 
-	log.Fatal(app.Listen(c.Port))
+	log.Fatal(app.Listen(":" + c.Port))
 
 }
