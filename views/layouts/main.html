@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="shortcut icon"
+      href="https://emojicdn.elk.sh/%F0%9F%A4%A1"
+      type="image/x-icon"
+    />
+    <title>HTMX + Go</title>
+    <script src="https://unpkg.com/htmx.org@1.9.7"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              clifford: "#da373d",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-neutral-100">
+    <div hx-boost="true" id="app" class="">{{ embed }}</div>
+  </body>
+</html>
