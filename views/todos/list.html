@@ -5,6 +5,7 @@
       hx-put="/todos/{{.ID}}/toggle"
       hx-target="#todos"
       hx-swap="outerHTML"
+      hx-sync="this:abort"
       class="flex items-center select-none bg-neutral-100 hover:bg-neutral-200 rounded-md p-2 px-4 my-2"
     >
       <svg
