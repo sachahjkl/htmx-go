@@ -8,8 +8,9 @@
   <form
     hx-post="/todos"
     hx-on::after-request="this.reset()"
-    hx-target="#todos"
-    hx-swap="outerHTML"
+    hx-target="#todos ul"
+    hx-swap="beforeend"
+    hx-indicator="#todo-spinner"
     class="mb-5"
   >
     <div class="flex gap-3 flex-wrap items-center">

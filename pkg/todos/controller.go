@@ -60,17 +60,7 @@ func (h handler) AddTodo(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusNotFound, result.Error.Error())
 	}
 
-	var todos []models.Todo
-
-	// get all the todos
-	result := h.DB.Model(&models.Todo{}).Find(&todos)
-	if result.Error != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, result.Error.Error())
-	}
-
-	return c.Render("todos/list", fiber.Map{
-		"Todos": todos,
-	})
+	return c.Render("todos/list_item", todo)
 }
 
 func (h handler) ToggleTodo(c *fiber.Ctx) error {
@@ -94,17 +84,7 @@ func (h handler) ToggleTodo(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, result.Error.Error())
 	}
 
-	var todos []models.Todo
-
-	// get all the todos
-	result = h.DB.Model(&models.Todo{}).Find(&todos)
-	if result.Error != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, result.Error.Error())
-	}
-
-	return c.Render("todos/list", fiber.Map{
-		"Todos": todos,
-	})
+	return c.Render("todos/list_item", todo)
 
 }
 
@@ -126,16 +106,6 @@ func (h handler) DeleteTodo(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, result.Error.Error())
 	}
 
-	var todos []models.Todo
-
-	// get all the todos
-	result = h.DB.Model(&models.Todo{}).Find(&todos)
-	if result.Error != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, result.Error.Error())
-	}
-
-	return c.Render("todos/list", fiber.Map{
-		"Todos": todos,
-	})
+	return c.SendString("")
 
 }
