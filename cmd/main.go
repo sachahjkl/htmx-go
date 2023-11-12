@@ -2,10 +2,10 @@ package main
 
 import (
 	"log"
-	router "sachahjkl/htmx_go/pkg/common"
-	"sachahjkl/htmx_go/pkg/common/config"
-	"sachahjkl/htmx_go/pkg/common/db"
-	"sachahjkl/htmx_go/pkg/todos"
+	"sachahjkl/htmx_go/pkg/config"
+	"sachahjkl/htmx_go/pkg/db"
+	"sachahjkl/htmx_go/pkg/handler"
+	"sachahjkl/htmx_go/pkg/router"
 
 	"github.com/joho/godotenv"
 )
@@ -22,12 +22,13 @@ func main() {
 		log.Fatalln("Failed at config", err)
 	}
 
+	db := db.Init(c.DBUrl)
+	
 	app := router.New(c)
 
-	db := db.Init(c.DBUrl)
-
 	router.RegisterDefaultRoutes(app)
-	todos.RegisterRoutes(app, db)
+	handler.RegisterTodoRoutes(app, db, c)
+	handler.RegisterAuthRoutes(app, db, c)
 
 	log.Fatal(app.Listen(":" + c.Port))
 

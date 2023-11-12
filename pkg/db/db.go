@@ -2,7 +2,7 @@ package db
 
 import (
 	"log"
-	"sachahjkl/htmx_go/pkg/common/models"
+	"sachahjkl/htmx_go/pkg/model"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -15,7 +15,9 @@ func Init(url string) *gorm.DB {
 		log.Fatalln(err)
 	}
 
-	db.AutoMigrate(&models.Todo{})
+	log.Printf("Migrating db @ %v", url)
+	db.AutoMigrate(&model.User{}, &model.Todo{})
+	log.Printf("Finished migration")
 
 	return db
 }

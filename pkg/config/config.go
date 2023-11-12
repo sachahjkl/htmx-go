@@ -5,11 +5,12 @@ import "github.com/spf13/viper"
 type Config struct {
 	Port  string `mapstructure:"PORT"`
 	DBUrl string `mapstructure:"DB_URL"`
+	EncryptionKey string `mapstructure:"ENCRYPTION_KEY"`
 }
 
-func LoadConfig() (c Config, err error) {
+func LoadConfig() (c *Config, err error) {
 
-	viper.AddConfigPath("./pkg/common/config/envs")
+	viper.AddConfigPath("./configs/envs")
 	viper.SetConfigName("dev")
 	viper.SetConfigType("env")
 

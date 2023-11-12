@@ -6,6 +6,11 @@
   id="todo-{{.ID}}"
   class="flex items-center select-none bg-neutral-100 [&.htmx-request]:bg-neutral-300 hover:bg-neutral-200 rounded-md p-2 px-4 my-2 relative"
 >
+  <style>
+    li:not(.htmx-request) .todo-spinner:not(.htmx-request) {
+      display: none;
+    }
+  </style>
   <svg
     class="grow-0 w-5 h-5 mr-2 transition-all cursor-pointer hover:scale-110 active:scale-90
           {{ if .Done }}
@@ -26,12 +31,10 @@
     />
   </svg>
 
-  <style>
-    #todo-{{.ID}}:not(.htmx-request) #todo-spinner-{{.ID}}:not(.htmx-request) {
-      display: none;
-    }
-  </style>
-  <div id="todo-spinner-{{.ID}}" class="absolute w-full h-full flex place-content-center items-center">
+  <div
+    class="todo-spinner absolute w-full h-full flex place-content-center items-center"
+    style
+  >
     <svg
       width="28"
       height="28"
@@ -65,7 +68,7 @@
     class="mr-2 text-lg transition-all cursor-pointer hover:scale-110 active:scale-90 grow-0"
     title="Remove task"
     hx-delete="/todos/{{.ID}}"
-    hx-indicator="#todo-spinner-{{.ID}}"
+    hx-indicator="previous .todo-spinner"
     hx-confirm='Are your sure you want to delete the task "{{.Title}}" ?'
     >❌</span
   >

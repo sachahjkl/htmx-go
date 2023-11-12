@@ -1,19 +1,19 @@
 <section id="todos">
+  <style>
+    :not(.htmx-request) #todo-add-spinner:not(.htmx-request) {
+      display: none;
+    }
+  </style>
   <ul>
     {{ range .Todos }} {{ template "todos/list_item" . }} {{ else }}
     <p class="text-black/40 text-sm w-full text-center">
       Nothing to see here 🕳
     </p>
     {{ end }}
-
-    <style>
-      *:not(.htmx-request) #todo-spinner:not(.htmx-request) {
-        display: none;
-      }
-    </style>
   </ul>
+
   <div
-    id="todo-spinner"
+    id="todo-add-spinner"
     class="flex place-content-center select-none bg-neutral-100 hover:bg-neutral-200 rounded-md p-2 px-4 my-2"
   >
     <svg
