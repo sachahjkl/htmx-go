@@ -101,13 +101,11 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
-	cookie := new(fiber.Cookie)
-	cookie.Name = common.USER_COOKIE_KEY
-	cookie.Value = encryptedToken
-	cookie.SameSite = "Strict"
-	cookie.HTTPOnly = true
-	cookie.Secure = true
-	c.Cookie(cookie)
+	c.Cookie(&fiber.Cookie{
+		Name:     common.USER_COOKIE_KEY,
+		Value:    encryptedToken,
+		SameSite: "Strict",
+	})
 
 	// redirect the guy to the main course
 	return c.RedirectToRoute("todos", nil)

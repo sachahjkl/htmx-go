@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="shortcut icon"
-      href="https://emojicdn.elk.sh/%F0%9F%A4%A1"
+      href="/assets/favicon.png"
       type="image/x-icon"
     />
     <title>HTMX + Go</title>
@@ -26,6 +26,7 @@
     <style>
       body {
         background: url("/assets/space.gif") repeat;
+        /* background: url("/assets/starstwinkle.gif") repeat; */
       }
     </style>
   </head>
@@ -51,9 +52,7 @@
         />
       </header>
 
-      <main class="p-4 mt-4 mx-auto ">
-        {{ embed }}
-      </main>
+      <main class="p-4 mt-4 mx-auto">{{ embed }}</main>
 
       <footer
         class="flex gap-2 flex-wrap justify-center p-4 mt-4 border bg-white/10 shadow-sm space-x-2 text-white"

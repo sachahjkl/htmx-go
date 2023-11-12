@@ -9,7 +9,9 @@ import (
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
+	"github.com/gofiber/fiber/v2/middleware/favicon"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"gorm.io/gorm"
 
 	"github.com/gofiber/template/html/v2"
@@ -29,6 +31,15 @@ func New(c *config.Config) *fiber.App {
 		// Views Layout is the global layout for all template render until override on Render function.
 		// ViewsLayout: "layouts/main",
 	})
+
+	// Some cool metrics
+	app.Get("/metrics", monitor.New())
+
+	// Faster favicon
+	app.Use(favicon.New(favicon.Config{
+		File: "./assets/favicon.png",
+		URL:  "/assets/favicon.png",
+	}))
 
 	// Log in console
 	app.Use(logger.New())
@@ -54,7 +65,7 @@ func New(c *config.Config) *fiber.App {
 
 func RegisterDefaultRoutes(app *fiber.App, db *gorm.DB) {
 	app.Static("/assets", "./assets", fiber.Static{
-		Browse: true, 
+		Browse: true,
 	})
 	m := middleware.New(db)
 	app.Get("/", m.WithUser, func(c *fiber.Ctx) error {
