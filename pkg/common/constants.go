@@ -1,6 +1,8 @@
 package common
 
 const (
-	USER_LOCALS_KEY     = "user"
-	USER_COOKIE_JWT_KEY = "userJWT"
+	USER_KEY         = "user"
+	USER_CONTEXT_KEY = "userJWT"
+	USER_COOKIE_KEY  = "user"
+	USER_CLAIM_KEY   = "userId"
 )

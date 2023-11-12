@@ -18,7 +18,7 @@ func RegisterTodoRoutes(app *fiber.App, db *gorm.DB, c *config.Config) {
 	middleware := middleware.New(db)
 
 	// Protect all "todo" routes (meanning innacessible to unlogged users)
-	routes := app.Group("/todos", middleware.Protected)
+	routes := app.Group("/todos", middleware.AuthenticatedOnly)
 
 	routes.Get("/", h.GetTodos).Name("todos")
 	routes.Post("/", h.AddTodo)

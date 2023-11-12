@@ -23,10 +23,10 @@ func main() {
 	}
 
 	db := db.Init(c.DBUrl)
-	
+
 	app := router.New(c)
 
-	router.RegisterDefaultRoutes(app)
+	router.RegisterDefaultRoutes(app, db)
 	handler.RegisterTodoRoutes(app, db, c)
 	handler.RegisterAuthRoutes(app, db, c)
 

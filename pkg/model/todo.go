@@ -19,42 +19,30 @@ func AddTodo(db *gorm.DB, title string, done bool, userId uint) (*Todo, error) {
 	}
 
 	// insert new todo
-	if result := db.Create(&todo); result.Error != nil {
-		return nil, result.Error
-	}
-	return &todo, nil
+	err := db.Create(&todo).Error
+	return &todo, err
 }
 
 func DeleteTodo(db *gorm.DB, id uint, userId uint) error {
-	result := db.Delete(&Todo{UserID: userId}, id)
-	if result.Error != nil {
-		return result.Error
-	}
-	return nil
+	return db.Delete(&Todo{UserID: userId}, id).Error
 }
 
 func ToggleTodo(db *gorm.DB, id uint, userId uint) (*Todo, error) {
 	todo := Todo{UserID: userId}
-	result := db.First(&todo, id)
-	if result.Error != nil {
-		return nil, result.Error
+	err := db.First(&todo, id).Error
+	if err != nil {
+		return nil, err
 	}
 
 	// toggle the todo
 	todo.Done = !todo.Done
 
-	result = db.Save(&todo)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return &todo, nil
+	err = db.Save(&todo).Error
+	return &todo, err
 }
 
 func AllTodos(db *gorm.DB, userId uint) (*[]Todo, error) {
 	var todos []Todo
-	result := db.Find(&todos)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return &todos, nil
+	err := db.Find(&todos).Error
+	return &todos, err
 }

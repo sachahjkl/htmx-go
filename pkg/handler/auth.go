@@ -3,6 +3,7 @@ package handler
 import (
 	"sachahjkl/htmx_go/pkg/common"
 	"sachahjkl/htmx_go/pkg/config"
+	"sachahjkl/htmx_go/pkg/middleware"
 	"sachahjkl/htmx_go/pkg/model"
 	"time"
 
@@ -25,32 +26,45 @@ type RegisterRequestBody struct {
 
 func RegisterAuthRoutes(app *fiber.App, db *gorm.DB, c *config.Config) {
 	h := &handler{
-		DB: db,
+		DB:     db,
+		Config: c,
 	}
 
+	middleware := middleware.New(db)
+
 	routes := app.Group("/auth")
-	routes.Get("/", h.RedirectToLogin)
-	routes.Get("/login", h.LoginPage).Name("login")
-	routes.Post("/login", h.LoginSubmit)
-	routes.Get("/register", h.RegisterPage)
-	routes.Post("/register", h.RegisterSubmit)
+	unauthOnly := routes.Group("/", middleware.UnauthenticatedOnly)
+	unauthOnly.Get("/", h.RedirectToLogin)
+	unauthOnly.Get("/login", h.LoginPage).Name("login")
+	unauthOnly.Post("/login", h.LoginSubmit)
+	unauthOnly.Get("/register", h.RegisterPage)
+	unauthOnly.Post("/register", h.RegisterSubmit)
+
+	// Authenticated only
+	authOnly := routes.Group("/", middleware.AuthenticatedOnly)
+	authOnly.Get("/logout", h.LogoutPage)
+	authOnly.Post("/logout", h.Logout)
 
 	// TODO: Delete, Patch user
 }
 
 func (h *handler) RedirectToLogin(c *fiber.Ctx) error {
-	return c.RedirectToRoute("login", fiber.Map{})
+	return c.RedirectToRoute("login", nil)
 }
 
 func (h *handler) LoginPage(c *fiber.Ctx) error {
+	return c.Render("auth/login", fiber.Map{
+		"UsernameMinLength": model.MIN_USERNAME_LEN,
+	}, "layouts/main")
+}
+func (h *handler) LogoutPage(c *fiber.Ctx) error {
+	return c.Render("auth/logout", nil)
+}
 
-	user := c.Locals(common.USER_LOCALS_KEY).(*model.User)
+func (h *handler) Logout(c *fiber.Ctx) error {
 
-	if user != nil {
-		return c.RedirectToRoute("todos", nil)
-	}
-
-	return c.Render("login/index", nil)
+	c.ClearCookie(common.USER_COOKIE_KEY)
+	return c.RedirectToRoute("login", nil)
 }
 
 func (h *handler) LoginSubmit(c *fiber.Ctx) error {
@@ -70,7 +84,7 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 
 	// Create the Claims
 	claims := jwt.MapClaims{
-		"username": user.Username,
+		common.USER_CLAIM_KEY: user.Username,
 	}
 
 	if !body.RememberMe {
@@ -87,19 +101,37 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
-	c.Cookie(&fiber.Cookie{
-		Name:  common.USER_COOKIE_JWT_KEY,
-		Value: encryptedToken,
-	})
+	cookie := new(fiber.Cookie)
+	cookie.Name = common.USER_COOKIE_KEY
+	cookie.Value = encryptedToken
+	cookie.SameSite = "Strict"
+	cookie.HTTPOnly = true
+	cookie.Secure = true
+	c.Cookie(cookie)
 
 	// redirect the guy to the main course
 	return c.RedirectToRoute("todos", nil)
 }
 func (h *handler) RegisterPage(c *fiber.Ctx) error {
-	return c.SendStatus(fiber.StatusNotFound)
+	return c.Render("auth/register", fiber.Map{
+		"UsernameMinLength": model.MIN_USERNAME_LEN,
+	}, "layouts/main")
 }
 
 func (h *handler) RegisterSubmit(c *fiber.Ctx) error {
-	return c.SendStatus(fiber.StatusNotFound)
+	body := RegisterRequestBody{}
 
+	// parse body, unmarshall to AddTodoRequestBody struct
+	if err := c.BodyParser(&body); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	_, err := model.CreateUser(h.DB, body.Username, body.Password, body.PasswordConfirm)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	// redirect the guy to the login page
+	return c.RedirectToRoute("login", nil)
 }

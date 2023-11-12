@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"sachahjkl/htmx_go/pkg/common"
 	"sachahjkl/htmx_go/pkg/config"
+	"sachahjkl/htmx_go/pkg/middleware"
 
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
-	"github.com/gofiber/fiber/v2/middleware/helmet"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"gorm.io/gorm"
 
 	"github.com/gofiber/template/html/v2"
 )
@@ -36,24 +37,34 @@ func New(c *config.Config) *fiber.App {
 	app.Use(compress.New())
 
 	// Protect server
-	app.Use(helmet.New())
+	// app.Use(helmet.New())
 
 	// use jwt middleware for authentication
 	app.Use(jwtware.New(jwtware.Config{
 		SigningKey:  jwtware.SigningKey{Key: []byte(c.EncryptionKey)},
-		TokenLookup: fmt.Sprintf("cookie:%v", common.USER_COOKIE_JWT_KEY), // should be "cookie:userJWT"
-		ContextKey:  common.USER_LOCALS_KEY,
+		TokenLookup: fmt.Sprintf("cookie:%v", common.USER_COOKIE_KEY), // should be "cookie:userJWT"
+		ContextKey:  common.USER_CONTEXT_KEY,
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
-			return c.RedirectToRoute("login", nil)
+			return c.Next() // let me do the checking in my own middleware
 		},
 	}))
 
 	return app
 }
 
-func RegisterDefaultRoutes(app *fiber.App) {
-	app.Static("/", "./assets")
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Render("index", nil, "layouts/main")
+func RegisterDefaultRoutes(app *fiber.App, db *gorm.DB) {
+	app.Static("/assets", "./assets", fiber.Static{
+		Browse: true, 
 	})
+	m := middleware.New(db)
+	app.Get("/", m.WithUser, func(c *fiber.Ctx) error {
+		user := c.Locals(common.USER_KEY)
+
+		if user != nil {
+			return c.RedirectToRoute("todos", nil)
+		} else {
+			return c.RedirectToRoute("login", nil)
+		}
+
+	}).Name("root")
 }

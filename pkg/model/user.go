@@ -22,7 +22,7 @@ const (
 
 func CreateUser(db *gorm.DB, username string, password string, passwordConfirm string) (*User, error) {
 
-	MINIMUM_ENTROPY := passwordvalidator.GetEntropy("Disparity-Tannery2-Resolute-Revolt")
+	MINIMUM_ENTROPY := passwordvalidator.GetEntropy("Cemdppue57")
 
 	// check if username is lengthy enough
 	if len(username) < MIN_USERNAME_LEN {
