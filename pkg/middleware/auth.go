@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"log"
 	"sachahjkl/htmx_go/pkg/common"
 
 	"github.com/gofiber/fiber/v2"
@@ -18,6 +19,8 @@ func (m *Middleware) AuthenticatedOnly(c *fiber.Ctx) error {
 	user, err := common.UserFromJwt(m.DB, userJWT)
 
 	if err != nil {
+
+		log.Printf("couldn't find user : %v - %v", *userJWT, err)
 		// clear cookie, it is invalid since it didn't
 		// provide a key to any real user
 		c.ClearCookie(common.USER_COOKIE_KEY)
@@ -31,9 +34,8 @@ func (m *Middleware) AuthenticatedOnly(c *fiber.Ctx) error {
 }
 
 func (m *Middleware) UnauthenticatedOnly(c *fiber.Ctx) error {
-	local := c.Locals(common.USER_CONTEXT_KEY)
-
-	if local != nil {
+	if c.Locals(common.USER_CONTEXT_KEY) != nil {
+		log.Printf("found a user in locals, going back to root")
 		return c.RedirectToRoute("root", nil)
 	}
 

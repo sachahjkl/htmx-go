@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"sachahjkl/htmx_go/pkg/common"
 	"sachahjkl/htmx_go/pkg/config"
 	"sachahjkl/htmx_go/pkg/middleware"
 	"sachahjkl/htmx_go/pkg/model"
@@ -31,12 +32,12 @@ type AddTodoRequestBody struct {
 }
 
 func (h handler) GetTodos(c *fiber.Ctx) error {
-	var todos []model.Todo
+	user := c.Locals(common.USER_KEY).(*model.User)
 
 	// get all the todos
-	result := h.DB.Model(&model.Todo{}).Find(&todos)
-	if result.Error != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, result.Error.Error())
+	todos, err := model.AllTodos(h.DB, user.ID)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
 	return c.Render("todos/index", fiber.Map{

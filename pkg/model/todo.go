@@ -1,17 +1,24 @@
 package model
 
 import (
+	"fmt"
+
 	"gorm.io/gorm"
 )
 
 type Todo struct {
 	gorm.Model
-	Title  string
+	Title  string `gorm:"not null"`
 	Done   bool
 	UserID uint
 }
 
 func AddTodo(db *gorm.DB, title string, done bool, userId uint) (*Todo, error) {
+
+	if len(title) == 0 {
+		return nil, fmt.Errorf("todo title can't be empty")
+	}
+
 	todo := Todo{
 		Title:  title,
 		Done:   done,
@@ -43,6 +50,6 @@ func ToggleTodo(db *gorm.DB, id uint, userId uint) (*Todo, error) {
 
 func AllTodos(db *gorm.DB, userId uint) (*[]Todo, error) {
 	var todos []Todo
-	err := db.Find(&todos).Error
+	err := db.Find(&todos, &Todo{UserID: userId}).Error
 	return &todos, err
 }

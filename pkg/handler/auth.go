@@ -33,17 +33,21 @@ func RegisterAuthRoutes(app *fiber.App, db *gorm.DB, c *config.Config) {
 	middleware := middleware.New(db)
 
 	routes := app.Group("/auth")
-	unauthOnly := routes.Group("/", middleware.UnauthenticatedOnly)
-	unauthOnly.Get("/", h.RedirectToLogin)
-	unauthOnly.Get("/login", h.LoginPage).Name("login")
-	unauthOnly.Post("/login", h.LoginSubmit)
-	unauthOnly.Get("/register", h.RegisterPage)
-	unauthOnly.Post("/register", h.RegisterSubmit)
+
+	app.Get("/login", h.RedirectToLogin)
+	app.Get("/register", func(c *fiber.Ctx) error { return c.RedirectToRoute("register", nil) })
+	app.Get("/logout", func(c *fiber.Ctx) error { return c.RedirectToRoute("logout", nil) })
+
+	routes.Get("/", middleware.UnauthenticatedOnly, h.RedirectToLogin)
+	routes.Get("/login", middleware.UnauthenticatedOnly, h.LoginPage).Name("login")
+	routes.Post("/login", middleware.UnauthenticatedOnly, h.LoginSubmit)
+	routes.Get("/register", middleware.UnauthenticatedOnly, h.RegisterPage)
+	routes.Post("/register", middleware.UnauthenticatedOnly, h.RegisterSubmit)
 
 	// Authenticated only
-	authOnly := routes.Group("/", middleware.AuthenticatedOnly)
-	authOnly.Get("/logout", h.LogoutPage)
-	authOnly.Post("/logout", h.Logout)
+
+	routes.Get("/logout", middleware.AuthenticatedOnly, h.LogoutPage).Name("logout")
+	routes.Post("/logout", middleware.AuthenticatedOnly, h.Logout)
 
 	// TODO: Delete, Patch user
 }
@@ -63,7 +67,13 @@ func (h *handler) LogoutPage(c *fiber.Ctx) error {
 
 func (h *handler) Logout(c *fiber.Ctx) error {
 
-	c.ClearCookie(common.USER_COOKIE_KEY)
+	c.Cookie(&fiber.Cookie{
+		Name: common.USER_COOKIE_KEY,
+		// expires in the past
+		Expires:  time.Now().Add(-(time.Hour * 2)),
+		HTTPOnly: true,
+		SameSite: "lax",
+	})
 	return c.RedirectToRoute("login", nil)
 }
 
@@ -84,12 +94,14 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 
 	// Create the Claims
 	claims := jwt.MapClaims{
-		common.USER_CLAIM_KEY: user.Username,
+		common.USER_CLAIM_KEY: user.ID,
 	}
+
+	expires := time.Now().Add(time.Hour * 72) // expires in 3 days
 
 	if !body.RememberMe {
 		// set expiry date if the guy doesn't want to have a long (unsafe) session
-		claims["exp"] = time.Now().Add(time.Hour * 24).Unix() // expires in 24 days
+		claims["exp"] = expires.Unix()
 	}
 
 	// Create token
@@ -104,10 +116,13 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 	c.Cookie(&fiber.Cookie{
 		Name:     common.USER_COOKIE_KEY,
 		Value:    encryptedToken,
-		SameSite: "Strict",
+		SameSite: "l²ax",
+		HTTPOnly: true,
+		Expires:  expires,
 	})
 
 	// redirect the guy to the main course
+	// return c.SendStatus(fiber.StatusOK)
 	return c.RedirectToRoute("todos", nil)
 }
 func (h *handler) RegisterPage(c *fiber.Ctx) error {

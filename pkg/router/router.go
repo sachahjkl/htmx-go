@@ -53,7 +53,7 @@ func New(c *config.Config) *fiber.App {
 	// use jwt middleware for authentication
 	app.Use(jwtware.New(jwtware.Config{
 		SigningKey:  jwtware.SigningKey{Key: []byte(c.EncryptionKey)},
-		TokenLookup: fmt.Sprintf("cookie:%v", common.USER_COOKIE_KEY), // should be "cookie:userJWT"
+		TokenLookup: fmt.Sprintf("cookie:%v", common.USER_COOKIE_KEY), // should be "cookie:user"
 		ContextKey:  common.USER_CONTEXT_KEY,
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
 			return c.Next() // let me do the checking in my own middleware
@@ -69,7 +69,7 @@ func RegisterDefaultRoutes(app *fiber.App, db *gorm.DB) {
 	})
 	m := middleware.New(db)
 	app.Get("/", m.WithUser, func(c *fiber.Ctx) error {
-		user := c.Locals(common.USER_KEY)
+		user := c.Locals(common.USER_CONTEXT_KEY)
 
 		if user != nil {
 			return c.RedirectToRoute("todos", nil)
