@@ -28,11 +28,12 @@ FROM scratch
 
 ENV PORT=7883
 ENV DB_URL="/var/db/prod.db"
+ENV ENCRYPTION_KEY="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 # Copy all the Code and stuff to compile everything
 
 WORKDIR /app
-COPY public ./public
+COPY assets ./assets
 COPY views ./views
 COPY --from=build /app/my-epic-app ./
 
