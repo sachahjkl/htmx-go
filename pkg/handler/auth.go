@@ -81,7 +81,7 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 
 	// parse body, unmarshall to AddTodoRequestBody struct
 	if err := c.BodyParser(&body); err != nil {
-		return c.Render("auth/forms/register", fiber.Map{
+		return c.Render("auth/forms/login", fiber.Map{
 			"UsernameMinLength": model.MIN_USERNAME_LEN,
 			"Errors":            []error{errors.New("invalid data")},
 		})
