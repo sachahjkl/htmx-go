@@ -50,6 +50,6 @@ func ToggleTodo(db *gorm.DB, id uint, userId uint) (*Todo, error) {
 
 func AllTodos(db *gorm.DB, userId uint) (*[]Todo, error) {
 	var todos []Todo
-	err := db.Where("user_id = ?", userId).Find(&todos).Error
+	err := db.Where("user_id = ?", userId).Order("created_at desc, title").Find(&todos).Error
 	return &todos, err
 }

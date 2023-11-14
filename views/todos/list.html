@@ -5,7 +5,7 @@
     }
   </style>
   <ul class="space-y-2">
-    {{ range .Todos }} {{ template "todos/list_item" . }} {{ else }}
+    {{ range .Todos }} {{ template "todos/list_item" . }} {{ end }}
     <style>
       li ~ #todo-empty {
         display: none;
@@ -14,7 +14,6 @@
     <p id="todo-empty" class="text-black/40 text-sm w-full text-center">
       Nothing to see here 🕳
     </p>
-    {{ end }}
   </ul>
 
   <div
