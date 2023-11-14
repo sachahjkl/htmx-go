@@ -1,4 +1,6 @@
-<form hx-post="/auth/login" hx-swap="outerHTML" class="w-full">
+{{ template "common/errors" . }}
+
+<form hx-post="/login" hx-swap="outerHTML" hx-target="this" class="w-full">
   <div>
     <label class="block" for="username">Username: </label>
     <input
@@ -6,9 +8,10 @@
       type="text"
       name="username"
       id="username"
+      value="{{.Username}}"
       placeholder="Your own unique username !"
-      required
       minlength="{{.UsernameMinLength}}"
+      required
     />
   </div>
 
@@ -26,7 +29,7 @@
   </div>
 
   <button
-    class="my-2 flex items-center gap-2 active:bg-[rgb(150,150,150)] hover:bg-[rgb(170,170,170)] px-2 py-1 border-2 border-l-white border-t-white border-r-black border-b-black bg-[rgb(204,204,204)] font-bold font-mono"
+    class="my-2 flex items-center gap-2 active:bg-[rgb(150,150,150)] hover:bg-[rgb(170,170,170)] px-2 py-1 border-2 border-neutral-100 border-r-neutral-700 border-b-neutral-700 bg-[rgb(204,204,204)] font-bold font-mono"
     type="submit"
   >
     <img

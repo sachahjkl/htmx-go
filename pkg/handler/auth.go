@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"sachahjkl/htmx_go/pkg/common"
 	"sachahjkl/htmx_go/pkg/config"
 	"sachahjkl/htmx_go/pkg/middleware"
@@ -32,21 +33,24 @@ func RegisterAuthRoutes(app *fiber.App, db *gorm.DB, c *config.Config) {
 
 	middleware := middleware.New(db)
 
+	app.Get("/login", middleware.UnauthenticatedOnly, h.LoginPage).Name("login")
+	app.Post("/login", middleware.UnauthenticatedOnly, h.LoginSubmit)
+	app.Get("/register", middleware.UnauthenticatedOnly, h.RegisterPage)
+	app.Post("/register", middleware.UnauthenticatedOnly, h.RegisterSubmit)
+
 	routes := app.Group("/auth")
 
-	app.Get("/login", h.RedirectToLogin)
-	app.Get("/register", func(c *fiber.Ctx) error { return c.RedirectToRoute("register", nil) })
-	app.Get("/logout", func(c *fiber.Ctx) error { return c.RedirectToRoute("logout", nil) })
-
 	routes.Get("/", middleware.UnauthenticatedOnly, h.RedirectToLogin)
-	routes.Get("/login", middleware.UnauthenticatedOnly, h.LoginPage).Name("login")
+	routes.Get("/login", middleware.UnauthenticatedOnly, h.LoginPage)
 	routes.Post("/login", middleware.UnauthenticatedOnly, h.LoginSubmit)
 	routes.Get("/register", middleware.UnauthenticatedOnly, h.RegisterPage)
 	routes.Post("/register", middleware.UnauthenticatedOnly, h.RegisterSubmit)
 
 	// Authenticated only
 
-	routes.Get("/logout", middleware.AuthenticatedOnly, h.LogoutPage).Name("logout")
+	app.Get("/logout", middleware.AuthenticatedOnly, h.Logout).Name("logout")
+	app.Post("/logout", middleware.AuthenticatedOnly, h.Logout)
+	routes.Get("/logout", middleware.AuthenticatedOnly, h.Logout)
 	routes.Post("/logout", middleware.AuthenticatedOnly, h.Logout)
 
 	// TODO: Delete, Patch user
@@ -61,19 +65,13 @@ func (h *handler) LoginPage(c *fiber.Ctx) error {
 		"UsernameMinLength": model.MIN_USERNAME_LEN,
 	}, "layouts/main")
 }
-func (h *handler) LogoutPage(c *fiber.Ctx) error {
-	return c.Render("auth/logout", nil)
-}
 
 func (h *handler) Logout(c *fiber.Ctx) error {
 
-	c.Cookie(&fiber.Cookie{
-		Name: common.USER_COOKIE_KEY,
-		// expires in the past
-		Expires:  time.Now().Add(-(time.Hour * 2)),
-		HTTPOnly: true,
-		SameSite: "lax",
-	})
+	common.ClearUser(c)
+	if c.Get("HX-Request") != "" {
+		return common.RedirectHTMX(c, "login", nil)
+	}
 	return c.RedirectToRoute("login", nil)
 }
 
@@ -83,13 +81,20 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 
 	// parse body, unmarshall to AddTodoRequestBody struct
 	if err := c.BodyParser(&body); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		return c.Render("auth/forms/register", fiber.Map{
+			"UsernameMinLength": model.MIN_USERNAME_LEN,
+			"Errors":            []error{errors.New("invalid data")},
+		})
 	}
 
 	user, err := model.LoginUser(h.DB, body.Username, body.Password)
 
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		return c.Render("auth/forms/register", fiber.Map{
+			"UsernameMinLength": model.MIN_USERNAME_LEN,
+			"Errors":            []error{err},
+			"Username":          body.Username,
+		})
 	}
 
 	// Create the Claims
@@ -110,20 +115,34 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 	// Generate encoded token and send it as response.
 	encryptedToken, err := token.SignedString([]byte(h.Config.EncryptionKey))
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		return c.Render("auth/forms/register", fiber.Map{
+			"UsernameMinLength": model.MIN_USERNAME_LEN,
+			"Errors":            []error{errors.New("internal error")},
+			"Username":          body.Username,
+		})
 	}
 
 	c.Cookie(&fiber.Cookie{
 		Name:     common.USER_COOKIE_KEY,
 		Value:    encryptedToken,
-		SameSite: "l²ax",
+		SameSite: "lax",
 		HTTPOnly: true,
 		Expires:  expires,
 	})
 
+	// get all the todos
+	todos, err := model.AllTodos(h.DB, user.ID)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
 	// redirect the guy to the main course
-	// return c.SendStatus(fiber.StatusOK)
-	return c.RedirectToRoute("todos", nil)
+	c.Append("HX-Retarget", "#container")
+	route, _ := c.GetRouteURL("todos", nil)
+	c.Append("HX-Replace-Url", route)
+	return c.Render("todos/index", fiber.Map{
+		"Todos": todos,
+	})
 }
 func (h *handler) RegisterPage(c *fiber.Ctx) error {
 	return c.Render("auth/register", fiber.Map{
@@ -136,15 +155,26 @@ func (h *handler) RegisterSubmit(c *fiber.Ctx) error {
 
 	// parse body, unmarshall to AddTodoRequestBody struct
 	if err := c.BodyParser(&body); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		return c.Render("auth/forms/register", fiber.Map{
+			"UsernameMinLength": model.MIN_USERNAME_LEN,
+			"Errors":            []error{errors.New("invalid data")},
+		})
 	}
 
 	_, err := model.CreateUser(h.DB, body.Username, body.Password, body.PasswordConfirm)
 
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		return c.Render("auth/forms/register", fiber.Map{
+			"UsernameMinLength": model.MIN_USERNAME_LEN,
+			"Errors":            []error{err},
+			"Username":          body.Username,
+		})
 	}
 
 	// redirect the guy to the login page
-	return c.RedirectToRoute("login", nil)
+	c.Append("HX-Retarget", "#container")
+	return c.Render("auth/login", fiber.Map{
+		"UsernameMinLength": model.MIN_USERNAME_LEN,
+		"Username":          body.Username,
+	})
 }

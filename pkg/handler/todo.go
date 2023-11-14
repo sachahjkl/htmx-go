@@ -34,6 +34,10 @@ type AddTodoRequestBody struct {
 func (h handler) GetTodos(c *fiber.Ctx) error {
 	user := c.Locals(common.USER_KEY).(*model.User)
 
+	if user == nil {
+		return fiber.NewError(fiber.StatusUnauthorized)
+	}
+
 	// get all the todos
 	todos, err := model.AllTodos(h.DB, user.ID)
 	if err != nil {
@@ -46,6 +50,11 @@ func (h handler) GetTodos(c *fiber.Ctx) error {
 }
 
 func (h handler) AddTodo(c *fiber.Ctx) error {
+	user := c.Locals(common.USER_KEY).(*model.User)
+
+	if user == nil {
+		return fiber.NewError(fiber.StatusUnauthorized)
+	}
 
 	body := AddTodoRequestBody{}
 
@@ -54,7 +63,7 @@ func (h handler) AddTodo(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	todo, err := model.AddTodo(h.DB, body.Title, false, 0)
+	todo, err := model.AddTodo(h.DB, body.Title, false, user.ID)
 
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
@@ -64,6 +73,11 @@ func (h handler) AddTodo(c *fiber.Ctx) error {
 }
 
 func (h handler) ToggleTodo(c *fiber.Ctx) error {
+	user := c.Locals(common.USER_KEY).(*model.User)
+
+	if user == nil {
+		return fiber.NewError(fiber.StatusUnauthorized)
+	}
 
 	param := struct {
 		ID uint `params:"id"`
@@ -74,7 +88,7 @@ func (h handler) ToggleTodo(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	todo, err := model.ToggleTodo(h.DB, param.ID, 0)
+	todo, err := model.ToggleTodo(h.DB, param.ID, user.ID)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
@@ -85,6 +99,12 @@ func (h handler) ToggleTodo(c *fiber.Ctx) error {
 
 func (h handler) DeleteTodo(c *fiber.Ctx) error {
 
+	user := c.Locals(common.USER_KEY).(*model.User)
+
+	if user == nil {
+		return fiber.NewError(fiber.StatusUnauthorized)
+	}
+
 	param := struct {
 		ID uint `params:"id"`
 	}{}
@@ -94,7 +114,7 @@ func (h handler) DeleteTodo(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	err = model.DeleteTodo(h.DB, param.ID, 0)
+	err = model.DeleteTodo(h.DB, param.ID, user.ID)
 
 	if err != nil {
 		fiber.NewError(fiber.StatusInternalServerError, err.Error())

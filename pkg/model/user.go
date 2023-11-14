@@ -29,10 +29,9 @@ func CreateUser(db *gorm.DB, username string, password string, passwordConfirm s
 		return nil, fmt.Errorf("username must be at of at least length %v", MIN_USERNAME_LEN)
 	}
 
-	errLocal := passwordvalidator.Validate(password, MINIMUM_ENTROPY)
-	// check if password is strong enough
-	if errLocal != nil {
-		return nil, fmt.Errorf("password is not strong enough")
+	// check if username is taken
+	if err := db.First(&User{Username: username}).Error; !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, fmt.Errorf("username already taken")
 	}
 
 	// check if passwords match
@@ -40,9 +39,10 @@ func CreateUser(db *gorm.DB, username string, password string, passwordConfirm s
 		return nil, fmt.Errorf("passwords do no match")
 	}
 
-	// check if username is taken
-	if err := db.First(&User{Username: username}).Error; !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, fmt.Errorf("username already taken")
+	errLocal := passwordvalidator.Validate(password, MINIMUM_ENTROPY)
+	// check if password is strong enough
+	if errLocal != nil {
+		return nil, fmt.Errorf("password is not strong enough")
 	}
 
 	// No errors
