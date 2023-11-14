@@ -31,12 +31,12 @@ func AddTodo(db *gorm.DB, title string, done bool, userId uint) (*Todo, error) {
 }
 
 func DeleteTodo(db *gorm.DB, id uint, userId uint) error {
-	return db.Delete(&Todo{UserID: userId}, id).Error
+	return db.Where("user_id = ?", userId).Delete(&Todo{}, id).Error
 }
 
 func ToggleTodo(db *gorm.DB, id uint, userId uint) (*Todo, error) {
-	todo := Todo{UserID: userId}
-	err := db.First(&todo, id).Error
+	var todo Todo
+	err := db.Where("user_id = ?", userId).First(&todo, id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -50,6 +50,6 @@ func ToggleTodo(db *gorm.DB, id uint, userId uint) (*Todo, error) {
 
 func AllTodos(db *gorm.DB, userId uint) (*[]Todo, error) {
 	var todos []Todo
-	err := db.Find(&todos, &Todo{UserID: userId}).Error
+	err := db.Where("user_id = ?", userId).Find(&todos).Error
 	return &todos, err
 }

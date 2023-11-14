@@ -18,14 +18,14 @@
     class="text-xl text-white font-mono font-bold p-1 px-2"
     style="background: radial-gradient(#010080, #050369)"
   >
-    Welcome 👋
+    Welcome {{.Username}}👋
   </h1>
 
   <form
     hx-post="/todos"
     hx-on::after-request="this.reset()"
     hx-target="#todos ul"
-    hx-swap="beforeend"
+    hx-swap="afterbegin"
     hx-indicator="#todo-add-spinner"
     class="mb-5"
   >

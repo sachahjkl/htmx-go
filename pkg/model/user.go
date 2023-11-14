@@ -71,8 +71,8 @@ func CreateUser(db *gorm.DB, username string, password string, passwordConfirm s
 
 func LoginUser(db *gorm.DB, username string, password string) (*User, error) {
 
-	user := User{Username: username}
-	result := db.First(&user)
+	var user User
+	result := db.Where(&User{Username: username}).First(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, fmt.Errorf("login failed")
 	}
@@ -88,7 +88,9 @@ func LoginUser(db *gorm.DB, username string, password string) (*User, error) {
 
 func GetUser(db *gorm.DB, userId uint) (*User, error) {
 	var user User
-	result := db.First(&user, userId)
+	result := db.Where(&User{Model: gorm.Model{
+		ID: userId,
+	}}).First(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, fmt.Errorf("user not found")
 	}

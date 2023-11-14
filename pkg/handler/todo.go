@@ -46,6 +46,7 @@ func (h handler) GetTodos(c *fiber.Ctx) error {
 
 	return c.Render("todos/index", fiber.Map{
 		"Todos": todos,
+		"Username": user.Username,
 	}, "layouts/main")
 }
 

@@ -6,7 +6,12 @@
   </style>
   <ul class="space-y-2">
     {{ range .Todos }} {{ template "todos/list_item" . }} {{ else }}
-    <p class="text-black/40 text-sm w-full text-center">
+    <style>
+      li ~ #todo-empty {
+        display: none;
+      }
+    </style>
+    <p id="todo-empty" class="text-black/40 text-sm w-full text-center">
       Nothing to see here 🕳
     </p>
     {{ end }}

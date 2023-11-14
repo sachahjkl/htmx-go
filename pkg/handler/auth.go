@@ -142,6 +142,7 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 	c.Append("HX-Replace-Url", route)
 	return c.Render("todos/index", fiber.Map{
 		"Todos": todos,
+		"Username": user.Username,
 	})
 }
 func (h *handler) RegisterPage(c *fiber.Ctx) error {
