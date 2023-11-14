@@ -90,7 +90,7 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 	user, err := model.LoginUser(h.DB, body.Username, body.Password)
 
 	if err != nil {
-		return c.Render("auth/forms/register", fiber.Map{
+		return c.Render("auth/forms/login", fiber.Map{
 			"UsernameMinLength": model.MIN_USERNAME_LEN,
 			"Errors":            []error{err},
 			"Username":          body.Username,
@@ -115,7 +115,7 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 	// Generate encoded token and send it as response.
 	encryptedToken, err := token.SignedString([]byte(h.Config.EncryptionKey))
 	if err != nil {
-		return c.Render("auth/forms/register", fiber.Map{
+		return c.Render("auth/forms/login", fiber.Map{
 			"UsernameMinLength": model.MIN_USERNAME_LEN,
 			"Errors":            []error{errors.New("internal error")},
 			"Username":          body.Username,
@@ -176,5 +176,6 @@ func (h *handler) RegisterSubmit(c *fiber.Ctx) error {
 	return c.Render("auth/login", fiber.Map{
 		"UsernameMinLength": model.MIN_USERNAME_LEN,
 		"Username":          body.Username,
+		"SuccessMessage":    "You can now login with your new account !",
 	})
 }

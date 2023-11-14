@@ -1,6 +1,6 @@
-{{ template "common/errors" . }}
 
 <form hx-post="/register" hx-swap="outerHTML" hx-target="this" class="w-full">
+  {{ template "common/errors" . }}
   <div>
     <label class="block" for="username"> Username: </label>
     <input

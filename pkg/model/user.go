@@ -30,7 +30,10 @@ func CreateUser(db *gorm.DB, username string, password string, passwordConfirm s
 	}
 
 	// check if username is taken
-	if err := db.First(&User{Username: username}).Error; !errors.Is(err, gorm.ErrRecordNotFound) {
+
+	var users []User
+	db.Where(&User{Username: username}).Find(&users)
+	if len(users) != 0 {
 		return nil, fmt.Errorf("username already taken")
 	}
 
