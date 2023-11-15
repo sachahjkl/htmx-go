@@ -29,6 +29,8 @@ FROM scratch
 ENV PORT=7883
 ENV DB_URL="/var/db/prod.db"
 ENV ENCRYPTION_KEY="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+ENV VERSION="${VERSION}"
+ENV COMMIT_SHA="${COMMIT_SHA}"
 
 # Copy all the Code and stuff to compile everything
 

@@ -63,6 +63,7 @@ func (h *handler) RedirectToLogin(c *fiber.Ctx) error {
 func (h *handler) LoginPage(c *fiber.Ctx) error {
 	return c.Render("auth/login", fiber.Map{
 		"UsernameMinLength": model.MIN_USERNAME_LEN,
+		"Config":            h.Config,
 	}, "layouts/main")
 }
 
@@ -84,6 +85,7 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 		return c.Render("auth/forms/login", fiber.Map{
 			"UsernameMinLength": model.MIN_USERNAME_LEN,
 			"Errors":            []error{errors.New("invalid data")},
+			"Config":            h.Config,
 		})
 	}
 
@@ -94,6 +96,7 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 			"UsernameMinLength": model.MIN_USERNAME_LEN,
 			"Errors":            []error{err},
 			"Username":          body.Username,
+			"Config":            h.Config,
 		})
 	}
 
@@ -119,6 +122,7 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 			"UsernameMinLength": model.MIN_USERNAME_LEN,
 			"Errors":            []error{errors.New("internal error")},
 			"Username":          body.Username,
+			"Config":            h.Config,
 		})
 	}
 
@@ -141,8 +145,9 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 	route, _ := c.GetRouteURL("todos", nil)
 	c.Append("HX-Replace-Url", route)
 	return c.Render("todos/index", fiber.Map{
-		"Todos": todos,
+		"Todos":    todos,
 		"Username": user.Username,
+		"Config":   h.Config,
 	})
 }
 func (h *handler) RegisterPage(c *fiber.Ctx) error {
@@ -159,6 +164,7 @@ func (h *handler) RegisterSubmit(c *fiber.Ctx) error {
 		return c.Render("auth/forms/register", fiber.Map{
 			"UsernameMinLength": model.MIN_USERNAME_LEN,
 			"Errors":            []error{errors.New("invalid data")},
+			"Config":            h.Config,
 		})
 	}
 
@@ -169,6 +175,7 @@ func (h *handler) RegisterSubmit(c *fiber.Ctx) error {
 			"UsernameMinLength": model.MIN_USERNAME_LEN,
 			"Errors":            []error{err},
 			"Username":          body.Username,
+			"Config":            h.Config,
 		})
 	}
 
@@ -178,5 +185,6 @@ func (h *handler) RegisterSubmit(c *fiber.Ctx) error {
 		"UsernameMinLength": model.MIN_USERNAME_LEN,
 		"Username":          body.Username,
 		"SuccessMessage":    "You can now login with your new account !",
+		"Config":            h.Config,
 	})
 }

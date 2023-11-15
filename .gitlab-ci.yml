@@ -1,3 +1,6 @@
+variables:
+  - COMMIT_SHA: $CI_COMMIT_SHORT_SHA
+  - VERSION: "v0.1.0.$CI_COMMIT_SHORT_SHA"
 # This file is a template, and might need editing before it works on your project.
 docker-build-master:
   # Official docker image.

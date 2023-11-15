@@ -6,6 +6,8 @@ type Config struct {
 	Port  string `mapstructure:"PORT"`
 	DBUrl string `mapstructure:"DB_URL"`
 	EncryptionKey string `mapstructure:"ENCRYPTION_KEY"`
+	Version string `mapstructure:"VERSION"`
+	CommitSha string `mapstructure:"COMMIT_SHA"`
 }
 
 func LoadConfig() (c *Config, err error) {
