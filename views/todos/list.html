@@ -4,21 +4,9 @@
       display: none;
     }
   </style>
-  <ul class="space-y-2">
-    {{ range .Todos }} {{ template "todos/list_item" . }} {{ end }}
-    <style>
-      li ~ #todo-empty {
-        display: none;
-      }
-    </style>
-    <p id="todo-empty" class="text-black/40 text-sm w-full text-center">
-      Nothing to see here 🕳
-    </p>
-  </ul>
-
   <div
     id="todo-add-spinner"
-    class="flex place-content-center select-none bg-neutral-100 hover:bg-neutral-200 p-2 px-4 my-2"
+    class="flex place-content-center select-none bg-neutral-100 border-2 border-neutral-700 border-r-neutral-200 border-b-neutral-200 hover:bg-neutral-200 p-2 px-4 my-2"
   >
     <svg
       width="28"
@@ -47,4 +35,15 @@
       />
     </svg>
   </div>
+  <ul class="space-y-2">
+    {{ range .Todos }} {{ template "todos/list_item" . }} {{ end }}
+    <style>
+      li ~ #todo-empty {
+        display: none;
+      }
+    </style>
+    <p id="todo-empty" class="text-black/40 text-sm w-full text-center">
+      Nothing to see here 🕳
+    </p>
+  </ul>
 </section>
