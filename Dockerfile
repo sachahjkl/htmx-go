@@ -24,13 +24,16 @@ RUN \
 
 FROM scratch
 
+ARG version="docker"
+ARG commit_sha="abcdefg"
+
 # Env for our app to use
 
 ENV PORT=7883
 ENV DB_URL="/var/db/prod.db"
 ENV ENCRYPTION_KEY="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-ENV VERSION="${VERSION}"
-ENV COMMIT_SHA="${COMMIT_SHA}"
+ENV VERSION="v0.0.1.${version}"
+ENV COMMIT_SHA="${commit_sha}"
 
 # Copy all the Code and stuff to compile everything
 
