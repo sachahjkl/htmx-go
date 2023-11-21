@@ -96,6 +96,7 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 			"UsernameMinLength": model.MIN_USERNAME_LEN,
 			"Errors":            []error{err},
 			"Username":          body.Username,
+			"Remember":          body.RememberMe,
 			"Config":            h.Config,
 		})
 	}
@@ -105,33 +106,38 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 		common.USER_CLAIM_KEY: user.ID,
 	}
 
-	expires := time.Now().Add(time.Hour * 72) // expires in 3 days
+	// define when to expire that token
+	expires := time.Now().Add(time.Hour * 24 * 3) // expires in 3 days
 
-	if !body.RememberMe {
-		// set expiry date if the guy doesn't want to have a long (unsafe) session
-		claims["exp"] = expires.Unix()
+	// this guy reaaaly wants us to remember him
+	if body.RememberMe {
+		// set expiry date to a looooooong time
+		expires = time.Now().Add(time.Hour * 24 * 90) // expires in 90 days
 	}
 
 	// Create token
+	claims["exp"] = expires.Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	// Generate encoded token and send it as response.
+	// Generate encoded token
 	encryptedToken, err := token.SignedString([]byte(h.Config.EncryptionKey))
 	if err != nil {
 		return c.Render("auth/forms/login", fiber.Map{
 			"UsernameMinLength": model.MIN_USERNAME_LEN,
 			"Errors":            []error{errors.New("internal error")},
 			"Username":          body.Username,
+			"Remember":          body.RememberMe,
 			"Config":            h.Config,
 		})
 	}
 
+	// set cookie with encrypted token
 	c.Cookie(&fiber.Cookie{
 		Name:     common.USER_COOKIE_KEY,
 		Value:    encryptedToken,
 		SameSite: "lax",
-		HTTPOnly: true,
 		Expires:  expires,
+		HTTPOnly: true,
 	})
 
 	// get all the todos
@@ -153,6 +159,7 @@ func (h *handler) LoginSubmit(c *fiber.Ctx) error {
 func (h *handler) RegisterPage(c *fiber.Ctx) error {
 	return c.Render("auth/register", fiber.Map{
 		"UsernameMinLength": model.MIN_USERNAME_LEN,
+		"Config":            h.Config,
 	}, "layouts/main")
 }
 
