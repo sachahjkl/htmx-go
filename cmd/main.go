@@ -17,10 +17,12 @@ func main() {
 	godotenv.Load()
 
 	c, err := config.LoadConfig()
-
+	
 	if err != nil {
 		log.Fatalln("Failed at config", err)
 	}
+	
+	log.Printf("Version : %v\n", c.Version)
 
 	db := db.Init(c.DBUrl)
 
