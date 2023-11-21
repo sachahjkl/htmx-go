@@ -4,17 +4,6 @@ ENV CGO_ENABLED=1
 ENV GOOS=linux
 ENV GOARCH=amd64
 
-ARG version="docker"
-ARG commit_sha="abcdefg"
-
-# Env for our app to use
-
-ENV PORT=7883
-ENV DB_URL="/var/db/prod.db"
-ENV ENCRYPTION_KEY="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-ENV VERSION="v0.0.1.${version}"
-ENV COMMIT_SHA="${commit_sha}"
-
 RUN apk add --no-cache \
     # Important: required for go-sqlite3
     gcc \
@@ -35,7 +24,16 @@ RUN \
 
 FROM scratch
 
+ARG version="docker"
+ARG commit_sha="abcdefg"
 
+# Env for our app to use
+
+ENV PORT=7883
+ENV DB_URL="/var/db/prod.db"
+ENV ENCRYPTION_KEY="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+ENV VERSION="v0.0.1.${version}"
+ENV COMMIT_SHA="${commit_sha}"
 
 # Copy all the Code and stuff to compile everything
 
