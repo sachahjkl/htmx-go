@@ -18,6 +18,9 @@ func LoadConfig() (c *Config, err error) {
 
 	viper.AutomaticEnv()
 
+	viper.BindEnv("VERSION")
+	viper.BindEnv("COMMIT_SHA")
+
 	err = viper.ReadInConfig()
 
 	// if the default files could not be set, we define some default values
