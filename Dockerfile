@@ -32,7 +32,7 @@ ARG commit_sha="abcdefg"
 ENV PORT=7883
 ENV DB_URL="/var/db/prod.db"
 ENV ENCRYPTION_KEY="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-ENV VERSION="v0.0.1.${version}"
+ENV VERSION="v0.0.1+${version}"
 ENV COMMIT_SHA="${commit_sha}"
 
 # Copy all the Code and stuff to compile everything

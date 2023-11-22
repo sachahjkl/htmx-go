@@ -29,7 +29,7 @@ func LoadConfig() (c *Config, err error) {
 		viper.SetDefault("PORT", "3000")
 		viper.SetDefault("DB_URL", "./last_resort.db")
 		viper.SetDefault("ENCRYPTION_KEY", "ABCDEFGHJKLMNOPQRSTUVWXYZ")
-		viper.SetDefault("VERSION", "v0.0.0.empty")
+		viper.SetDefault("VERSION", "v0.0.0+empty")
 		viper.SetDefault("COMMIT_SHA", "abcdefg")
 	}
 
