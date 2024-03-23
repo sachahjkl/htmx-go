@@ -65,6 +65,7 @@
   <span
     class="mr-2 text-lg transition-all cursor-pointer hover:scale-110 active:scale-90 grow-0"
     title="Remove task"
+    hx-trigger="click consume"
     hx-delete="/todos/{{.ID}}"
     hx-indicator="previous .todo-spinner"
     hx-confirm='Are your sure you want to delete the task "{{.Title}}" ?'
