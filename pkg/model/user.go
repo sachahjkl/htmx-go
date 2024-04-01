@@ -3,6 +3,7 @@ package model
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	passwordvalidator "github.com/wagslane/go-password-validator"
 	"golang.org/x/crypto/bcrypt"
@@ -14,6 +15,7 @@ type User struct {
 	Username       string
 	HashedPassword string
 	Todos          []Todo
+	Settings       Settings
 }
 
 const (
@@ -24,13 +26,19 @@ func CreateUser(db *gorm.DB, username string, password string, passwordConfirm s
 
 	MINIMUM_ENTROPY := passwordvalidator.GetEntropy("Cemdppue57")
 
+	username = strings.TrimSpace(username)
+
 	// check if username is lengthy enough
 	if len(username) < MIN_USERNAME_LEN {
 		return nil, fmt.Errorf("username must be at of at least length %v", MIN_USERNAME_LEN)
 	}
 
-	// check if username is taken
+	// check if username contains any spaces
+	if strings.Contains(username, " ") {
+		return nil, fmt.Errorf("username cannot contain spaces")
+	}
 
+	// check if username is taken
 	var users []User
 	db.Where(&User{Username: username}).Find(&users)
 	if len(users) != 0 {

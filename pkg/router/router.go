@@ -69,7 +69,7 @@ func RegisterDefaultRoutes(app *fiber.App, db *gorm.DB) {
 	})
 	m := middleware.New(db)
 	app.Get("/", m.WithUser, func(c *fiber.Ctx) error {
-		user := c.Locals(common.USER_CONTEXT_KEY)
+		user := c.Locals(common.USER_KEY)
 
 		if user != nil {
 			return c.RedirectToRoute("todos", nil)

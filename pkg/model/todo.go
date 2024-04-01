@@ -13,6 +13,12 @@ type Todo struct {
 	UserID uint
 }
 
+type TodoJSON struct {
+	Title   string `json:"title"`
+	Done    bool   `json:"done"`
+	Created string `json:"created"`
+}
+
 func AddTodo(db *gorm.DB, title string, done bool, userId uint) (*Todo, error) {
 
 	if len(title) == 0 {

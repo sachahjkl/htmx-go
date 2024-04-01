@@ -11,6 +11,9 @@
       tailwind.config = {
         theme: {
           extend: {
+            fontFamily: {
+              comic: ["Comic sans MS", "Comic Sans", "cursive"],
+            },
             colors: {
               clifford: "#da373d",
             },
@@ -29,36 +32,22 @@
   <body class="bg-black">
     <div class="mx-auto px-2 container" hx-boost="true" id="app">
       <header class="flex items-center gap-2 justify-center my-3">
-        <img
-          class="block h-10"
-          style="image-rendering: pixelated"
-          src="/assets/icons/cuppa0e.gif"
-          alt="coffee"
-        />
+        <img class="block h-10" style="image-rendering: pixelated" src="/assets/icons/cuppa0e.gif" alt="coffee" />
         <marquee
           class="max-w-lg text-6xl border-x-2 font-bold font-serif text-yellow-600 drop-shadow-lg shadow-yellow-300"
           direction="left"
           >TODO APP FROM THE FUTURE</marquee
         >
-        <img
-          class="block h-10"
-          style="image-rendering: pixelated"
-          src="/assets/icons/coffee_set2c.gif"
-          alt="coffee"
-        />
+        <img class="block h-10" style="image-rendering: pixelated" src="/assets/icons/coffee_set2c.gif" alt="coffee" />
       </header>
+
+      <img src="/assets/icons/star_separator.gif" class="mx-auto" alt="separator" />
 
       <main class="p-4 mt-4 mx-auto">{{ embed }}</main>
 
-      <footer
-      >
-        <div class="flex gap-2 flex-wrap justify-center space-x-2 p-4 mt-4 border bg-white/10 shadow-sm  text-white">
-          <img
-            class="block h-10"
-            style="image-rendering: pixelated"
-            src="/assets/icons/button.gif"
-            alt="coffee"
-          />
+      <footer>
+        <div class="flex gap-2 flex-wrap justify-center space-x-2 p-4 mt-4 border bg-white/10 shadow-sm text-white">
+          <img class="block h-10" style="image-rendering: pixelated" src="/assets/icons/button.gif" alt="coffee" />
           <img
             class="block h-10"
             style="image-rendering: pixelated"
@@ -130,9 +119,7 @@
               </g>
             </svg>
             <p>
-              <a
-                class="text-sm underline font-mono text-white"
-                href="https://gitlab.com/sachahjkl/htmx-go"
+              <a class="text-sm underline font-mono text-white" href="https://gitlab.com/sachahjkl/htmx-go"
                 >Source code</a
               >
             </p>
@@ -150,7 +137,9 @@
             alt="coffee"
           />
         </div>
-        <div class="max-w-sm text-center mx-auto opacity-20 hover:opacity-100 transition duration-500">{{ template "common/version" .}}</div>
+        <div class="max-w-sm text-center mx-auto opacity-20 hover:opacity-100 transition duration-500">
+          {{ template "common/version" .}}
+        </div>
       </footer>
     </div>
   </body>
