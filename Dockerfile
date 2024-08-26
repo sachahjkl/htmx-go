@@ -1,4 +1,4 @@
-FROM golang:alpine3.18 AS build
+FROM golang:alpine3.20 AS build
 
 ENV CGO_ENABLED=1
 ENV GOOS=linux
@@ -15,10 +15,10 @@ WORKDIR /app
 COPY . .
 
 # Downloads all the dependencies in advance (could be left out, but it's more clear this way)
-RUN \
-    go mod download && \
-    go mod tidy && \
-    go build -a -o my-epic-app -ldflags='-s -w -extldflags "-static"' ./cmd/main.go
+# Separate each command to isolate issues
+RUN go mod download
+RUN go mod tidy
+RUN go build -a -o my-epic-app -ldflags='-s -w -extldflags "-static"' ./cmd/main.go
 
 # Main stage
 
