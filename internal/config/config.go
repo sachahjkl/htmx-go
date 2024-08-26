@@ -12,10 +12,6 @@ type Config struct {
 
 func LoadConfig() (c *Config, err error) {
 
-	viper.AddConfigPath("./configs/envs")
-	viper.SetConfigName("dev")
-	viper.SetConfigType("env")
-
 	viper.AutomaticEnv()
 
 	// need to manually bind otherwise values are empty (why ?)

@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"log"
-	"sachahjkl/htmx_go/pkg/common"
+	"sachahjkl/htmx_go/internal/common"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"

@@ -2,7 +2,7 @@ package db
 
 import (
 	"log"
-	"sachahjkl/htmx_go/pkg/model"
+	"sachahjkl/htmx_go/internal/model"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

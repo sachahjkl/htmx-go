@@ -2,10 +2,10 @@ package main
 
 import (
 	"log"
-	"sachahjkl/htmx_go/pkg/config"
-	"sachahjkl/htmx_go/pkg/db"
-	"sachahjkl/htmx_go/pkg/handler"
-	"sachahjkl/htmx_go/pkg/router"
+	"sachahjkl/htmx_go/internal/config"
+	"sachahjkl/htmx_go/internal/db"
+	"sachahjkl/htmx_go/internal/handler"
+	"sachahjkl/htmx_go/internal/router"
 
 	"github.com/joho/godotenv"
 )
@@ -31,6 +31,7 @@ func main() {
 	router.RegisterDefaultRoutes(app, db)
 	handler.RegisterTodoRoutes(app, db, c)
 	handler.RegisterAuthRoutes(app, db, c)
+	handler.RegisterUserRoutes(app, db, c)
 
 	log.Fatal(app.Listen("127.0.0.1:" + c.Port))
 

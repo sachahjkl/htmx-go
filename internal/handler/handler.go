@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"sachahjkl/htmx_go/pkg/config"
+	"sachahjkl/htmx_go/internal/config"
 
 	"gorm.io/gorm"
 )

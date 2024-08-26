@@ -2,7 +2,7 @@ package common
 
 import (
 	"fmt"
-	"sachahjkl/htmx_go/pkg/model"
+	"sachahjkl/htmx_go/internal/model"
 
 	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"

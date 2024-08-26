@@ -2,10 +2,10 @@ package handler
 
 import (
 	"errors"
-	"sachahjkl/htmx_go/pkg/common"
-	"sachahjkl/htmx_go/pkg/config"
-	"sachahjkl/htmx_go/pkg/middleware"
-	"sachahjkl/htmx_go/pkg/model"
+	"sachahjkl/htmx_go/internal/common"
+	"sachahjkl/htmx_go/internal/config"
+	"sachahjkl/htmx_go/internal/middleware"
+	"sachahjkl/htmx_go/internal/model"
 	"time"
 
 	"github.com/gofiber/fiber/v2"

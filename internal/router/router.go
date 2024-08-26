@@ -2,9 +2,9 @@ package router
 
 import (
 	"fmt"
-	"sachahjkl/htmx_go/pkg/common"
-	"sachahjkl/htmx_go/pkg/config"
-	"sachahjkl/htmx_go/pkg/middleware"
+	"sachahjkl/htmx_go/internal/common"
+	"sachahjkl/htmx_go/internal/config"
+	"sachahjkl/htmx_go/internal/middleware"
 
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
