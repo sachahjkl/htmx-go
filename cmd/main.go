@@ -33,6 +33,6 @@ func main() {
 	handler.RegisterAuthRoutes(app, db, c)
 	handler.RegisterUserRoutes(app, db, c)
 
-	log.Fatal(app.Listen("127.0.0.1:" + c.Port))
+	log.Fatal(app.Listen("0.0.0.0:" + c.Port))
 
 }
