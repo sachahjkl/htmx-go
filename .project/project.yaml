@@ -4,8 +4,8 @@ topics:
   - "go"
   - "go-fiber"
   - "htmx"
-homepage: ""
+homepage: "https://htmx.sacha.house/"
 source:
-  provider: gitlab
+  provider: github
   namespace: "sachahjkl"
   path: "sachahjkl/htmx-go"
