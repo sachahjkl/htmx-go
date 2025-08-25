@@ -6,22 +6,7 @@
     <link rel="shortcut icon" href="/assets/favicon.png" type="image/x-icon" />
     <title>Todo App from the future</title>
     <script src="https://unpkg.com/htmx.org@1.9.7"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              comic: ["Comic sans MS", "Comic Sans", "cursive"],
-            },
-            colors: {
-              clifford: "#da373d",
-            },
-          },
-        },
-      };
-    </script>
-
+    <link rel="stylesheet" href="/assets/style.css" />
     <style>
       body {
         background: url("/assets/space.gif") repeat;
@@ -35,8 +20,7 @@
         <img class="block h-10" style="image-rendering: pixelated" src="/assets/icons/cuppa0e.gif" alt="coffee" />
         <marquee
           class="max-w-lg text-6xl border-x-2 font-bold font-serif text-yellow-600 drop-shadow-lg shadow-yellow-300"
-          direction="left"
-          >TODO APP FROM THE FUTURE</marquee
+          direction="left">TODO APP FROM THE FUTURE</marquee
         >
         <img class="block h-10" style="image-rendering: pixelated" src="/assets/icons/coffee_set2c.gif" alt="coffee" />
       </header>
@@ -47,7 +31,7 @@
 
       <footer>
         <div class="flex gap-2 flex-wrap justify-center space-x-2 p-4 mt-4 border bg-white/10 shadow-sm text-white">
-                    <img
+          <img
             class="inline-block h-10"
             style="image-rendering: pixelated"
             src="/assets/icons/createdwith.jpeg"
@@ -143,7 +127,6 @@
             src="/assets/icons/fairlite.gif"
             alt="coffee"
           />
-
         </div>
         <div class="max-w-sm text-center mx-auto opacity-20 hover:opacity-100 transition duration-500">
           {{ template "common/version" .}}
