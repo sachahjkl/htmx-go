@@ -1,0 +1,11 @@
+name: "htmx-go"
+description: "https://htmx.sacha.house/ - Testing out HTMX using go and fiber to drive UI state from the server"
+topics:
+  - "go"
+  - "go-fiber"
+  - "htmx"
+homepage: ""
+source:
+  provider: gitlab
+  namespace: "sachahjkl"
+  path: "sachahjkl/htmx-go"
