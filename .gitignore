@@ -32,10 +32,10 @@ go.work
 
 # NPM stuff
 node_modules
+/result
 
 # Sqlite stuff
 *.db-shm
 *.db-wal
 
 # End of https://www.toptal.com/developers/gitignore/api/go,dotenv
-
