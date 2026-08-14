@@ -24,7 +24,7 @@
         };
         pname = "htmx-go";
         version = "0.0.1";
-        vendorHash = "sha256-T5v3g8iQsvI840x0JEpUoYJHp4ZTOe+1Kxj5PQiAS8k=";
+        vendorHash = "sha256-zT3tt5+9xrXNfolWPZ9H6LFNz4NzeQdlmY/QtKYk9NE=";
         src = pkgs.lib.cleanSourceWith {
           src = ./.;
           filter =
@@ -54,6 +54,7 @@
         app = pkgs.buildGoModule {
           inherit pname version src;
           inherit vendorHash;
+          env.CGO_ENABLED = 0;
           subPackages = [ "cmd" ];
           postInstall = ''
             mv $out/bin/cmd $out/bin/${pname}
@@ -69,6 +70,7 @@
             pname = "${pname}-${name}";
             inherit version src;
             inherit vendorHash;
+            env.CGO_ENABLED = 0;
             buildPhase = command;
             doCheck = false;
             installPhase = "touch $out";

@@ -1,29 +1,21 @@
 package db
 
 import (
+	"fmt"
 	"log"
 	"sachahjkl/htmx_go/internal/model"
 
-	"github.com/jacob2161/sqlitebp"
-	"gorm.io/driver/sqlite"
+	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 )
 
 func Init(url string) *gorm.DB {
 
-	// Creates or opens the database with best practice defaults
-	// (WAL, foreign keys, busy timeout, NORMAL synchronous, private cache, etc.)
-	db, err := sqlitebp.OpenReadWriteCreate(url)
-
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	dialector := sqlite.New(sqlite.Config{
-		Conn: db,
-	})
-
-	ormDb, err := gorm.Open(dialector, &gorm.Config{})
+	dsn := fmt.Sprintf(
+		"file:%s?cache=private&_pragma=busy_timeout(5000)&_pragma=foreign_keys(1)&_pragma=journal_mode(WAL)&_pragma=synchronous(NORMAL)",
+		url,
+	)
+	ormDb, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		log.Fatalln(err)
