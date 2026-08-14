@@ -215,10 +215,10 @@ func (h handler) ExportTodosCsv(c *fiber.Ctx) error {
 	return c.SendString(strings.Join(columnNames, separator) + "\n" + strings.Join(csvTodos, "\n"))
 }
 
-func (h handler) RemoveAllTodos (c *fiber.Ctx) error { 
+func (h handler) RemoveAllTodos(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNotImplemented)
 }
 
-func (h handler) RemoveAllFinishedTodos (c *fiber.Ctx) error { 
+func (h handler) RemoveAllFinishedTodos(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNotImplemented)
 }
