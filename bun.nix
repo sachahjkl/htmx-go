@@ -11,8 +11,7 @@
   fetchgit,
   fetchurl,
   ...
-}:
-{
+}: {
   "@emnapi/core@1.4.5" = fetchurl {
     url = "https://registry.npmjs.org/@emnapi/core/-/core-1.4.5.tgz";
     hash = "sha512-XsLw1dEOpkSX/WucdqUhPWP7hDxSvZiY+fsUC14h+FtQ2Ifni4znbBt8punRX+Uj2JG/uDb8nEHVKvrVlvdZ5Q==";

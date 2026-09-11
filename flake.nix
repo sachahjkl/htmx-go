@@ -8,38 +8,35 @@
     };
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      flake-utils,
-      bun2nix,
-    }:
-    flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (
-      system:
-      let
+  outputs = {
+    self,
+    nixpkgs,
+    flake-utils,
+    bun2nix,
+  }:
+    flake-utils.lib.eachSystem ["x86_64-linux" "aarch64-linux"] (
+      system: let
         pkgs = import nixpkgs {
           inherit system;
-          overlays = [ bun2nix.overlays.default ];
+          overlays = [bun2nix.overlays.default];
         };
         pname = "htmx-go";
         version = "0.0.1";
         vendorHash = "sha256-zT3tt5+9xrXNfolWPZ9H6LFNz4NzeQdlmY/QtKYk9NE=";
         src = pkgs.lib.cleanSourceWith {
           src = ./.;
-          filter =
-            path: _type:
+          filter = path: _type:
             !builtins.elem (baseNameOf path) [
               ".git"
               ".jj"
               "result"
             ];
         };
-        bunDeps = pkgs.bun2nix.fetchBunDeps { bunNix = ./bun.nix; };
+        bunDeps = pkgs.bun2nix.fetchBunDeps {bunNix = ./bun.nix;};
         css = pkgs.bun2nix.mkDerivation {
           pname = "${pname}-css";
           inherit version src bunDeps;
-          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ];
+          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [pkgs.stdenv.cc.cc.lib];
           buildPhase = ''
             runHook preBuild
             bun ./node_modules/@tailwindcss/cli/dist/index.mjs -i ./style/style.css -o style.css
@@ -55,7 +52,7 @@
           inherit pname version src;
           inherit vendorHash;
           env.CGO_ENABLED = 0;
-          subPackages = [ "cmd" ];
+          subPackages = ["cmd"];
           postInstall = ''
             mv $out/bin/cmd $out/bin/${pname}
             mkdir -p $out/share/${pname}
@@ -64,8 +61,7 @@
           '';
           meta.mainProgram = pname;
         };
-        mkGoCheck =
-          name: command:
+        mkGoCheck = name: command:
           pkgs.buildGoModule {
             pname = "${pname}-${name}";
             inherit version src;
@@ -75,7 +71,7 @@
             doCheck = false;
             installPhase = "touch $out";
           };
-        gofmt = pkgs.runCommand "${pname}-gofmt" { nativeBuildInputs = [ pkgs.go ]; } ''
+        gofmt = pkgs.runCommand "${pname}-gofmt" {nativeBuildInputs = [pkgs.go];} ''
           unformatted=$(find ${src} -name '*.go' -type f -exec gofmt -l {} +)
           if [ -n "$unformatted" ]; then
             echo "$unformatted"
@@ -85,13 +81,13 @@
         '';
         actionlint =
           pkgs.runCommand "${pname}-actionlint"
-            {
-              nativeBuildInputs = [ pkgs.actionlint ];
-            }
-            ''
-              actionlint -config-file ${src}/.github/actionlint.yaml ${src}/.github/workflows/*.yml
-              touch $out
-            '';
+          {
+            nativeBuildInputs = [pkgs.actionlint];
+          }
+          ''
+            actionlint -config-file ${src}/.github/actionlint.yaml ${src}/.github/workflows/*.yml
+            touch $out
+          '';
         dockerImage = pkgs.dockerTools.buildLayeredImage {
           name = pname;
           tag = version;
@@ -101,7 +97,7 @@
             pkgs.dockerTools.fakeNss
           ];
           config = {
-            Cmd = [ "${app}/bin/${pname}" ];
+            Cmd = ["${app}/bin/${pname}"];
             Env = [
               "PORT=7883"
               "DB_URL=/var/db/prod.db"
@@ -110,23 +106,13 @@
               "COMMIT_SHA=${self.shortRev or "unknown"}"
               "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
             ];
-            ExposedPorts."7883/tcp" = { };
-            Volumes."/var/db" = { };
+            ExposedPorts."7883/tcp" = {};
+            Volumes."/var/db" = {};
             WorkingDir = "${app}/share/${pname}";
           };
         };
-        formatter = pkgs.writeShellApplication {
-          name = "nix-fmt";
-          runtimeInputs = [ pkgs.nixfmt ];
-          text = ''
-            if [ "$#" -eq 0 ]; then
-              set -- flake.nix bun.nix
-            fi
-            exec nixfmt "$@"
-          '';
-        };
-      in
-      {
+        formatter = pkgs.alejandra;
+      in {
         packages = {
           default = app;
           inherit css dockerImage;
@@ -154,7 +140,7 @@
             pkgs.bun
             pkgs.bun2nix
             pkgs.go
-            pkgs.nixfmt
+            pkgs.alejandra
           ];
         };
 
