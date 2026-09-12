@@ -87,7 +87,7 @@ job "htmx-go" {
         port     = "http"
         tags = [
           "traefik.enable=true",
-          "traefik.http.routers.htmx-go-staging.entrypoints=nomad",
+          "traefik.http.routers.htmx-go-staging.entrypoints=websecure",
           "traefik.http.routers.htmx-go-staging.middlewares=htmx-go-staging-noindex",
           "traefik.http.routers.htmx-go-staging.rule=Host(`staging.htmx.sacha.house`)",
           "traefik.http.routers.htmx-go-staging.tls.domains[0].main=staging.htmx.sacha.house",

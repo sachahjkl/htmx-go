@@ -113,7 +113,7 @@ job "htmx-go" {
         port     = "http"
         tags = [
           "traefik.enable=true",
-          "traefik.http.routers.htmx-go-production.entrypoints=nomad",
+          "traefik.http.routers.htmx-go-production.entrypoints=websecure",
           "traefik.http.routers.htmx-go-production.rule=Host(`htmx.sacha.house`)",
         ]
 
