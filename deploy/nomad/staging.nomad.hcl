@@ -87,6 +87,13 @@ job "htmx-go" {
         name     = "htmx-go-staging"
         provider = "nomad"
         port     = "http"
+        tags = [
+          "traefik.enable=true",
+          "traefik.http.routers.htmx-go-staging.entrypoints=nomad",
+          "traefik.http.routers.htmx-go-staging.middlewares=htmx-go-staging-noindex",
+          "traefik.http.routers.htmx-go-staging.rule=Host(`staging.htmx.sacha.house`)",
+          "traefik.http.middlewares.htmx-go-staging-noindex.headers.customresponseheaders.X-Robots-Tag=noindex, nofollow",
+        ]
 
         check {
           name     = "HTTP health"

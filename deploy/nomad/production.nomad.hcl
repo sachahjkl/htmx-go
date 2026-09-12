@@ -113,6 +113,11 @@ job "htmx-go" {
         name     = "htmx-go-production"
         provider = "nomad"
         port     = "http"
+        tags = [
+          "traefik.enable=true",
+          "traefik.http.routers.htmx-go-production.entrypoints=nomad",
+          "traefik.http.routers.htmx-go-production.rule=Host(`htmx.sacha.house`)",
+        ]
 
         check {
           name     = "HTTP health"
