@@ -1,0 +1,11 @@
+application:
+  name: htmx-go
+  port: 7883
+  healthPath: /api/health
+
+domain:
+  production: htmx.sacha.house
+  staging: staging.htmx.sacha.house
+
+volume:
+  mountPath: /data
