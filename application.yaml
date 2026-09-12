@@ -3,9 +3,23 @@ application:
   port: 7883
   healthPath: /api/health
 
-domain:
-  production: htmx.sacha.house
-  staging: staging.htmx.sacha.house
+modules:
+  task:
+    - deploy/task.hcl
 
+environments:
+  staging:
+    domain: staging.htmx.sacha.house
+    noIndex: true
+  production:
+    domain: htmx.sacha.house
+
+    modules:
+      group:
+        - deploy/group-production.hcl
 volume:
   mountPath: /data
+
+resources:
+  cpu: 500
+  memory: 512
