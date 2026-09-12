@@ -64,6 +64,10 @@ func New(c *config.Config) *fiber.App {
 }
 
 func RegisterDefaultRoutes(app *fiber.App, db *gorm.DB) {
+	app.Get("/api/health", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{"status": "ok"})
+	})
+
 	app.Static("/assets", "./assets", fiber.Static{
 		Browse: true,
 	})

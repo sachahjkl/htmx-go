@@ -7,7 +7,7 @@ build:
 # this requires "air" to be installed
 # you can run `go install github.com/cosmtrek/air@latest` to get it
 live:
-	air 
+	air
 
 install-tailwind:
 	bun install tailwindcss @tailwindcss/cli

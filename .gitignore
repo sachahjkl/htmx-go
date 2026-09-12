@@ -33,6 +33,7 @@ go.work
 # NPM stuff
 node_modules
 /result
+.pre-commit-config.yaml
 
 # Sqlite stuff
 *.db-shm

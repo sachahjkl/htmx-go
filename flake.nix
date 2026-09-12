@@ -1,7 +1,16 @@
 {
+  nixConfig = {
+    extra-substituters = ["https://nix-community.cachix.org"];
+    extra-trusted-public-keys = ["nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="];
+  };
+
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2605";
     flake-utils.url = "github:numtide/flake-utils";
+    git-hooks = {
+      url = "https://flakehub.com/f/cachix/git-hooks.nix/0.1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     bun2nix = {
       url = "github:nix-community/bun2nix?ref=2.1.2";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -12,6 +21,7 @@
     self,
     nixpkgs,
     flake-utils,
+    git-hooks,
     bun2nix,
   }:
     flake-utils.lib.eachSystem ["x86_64-linux" "aarch64-linux"] (
@@ -93,11 +103,14 @@
           tag = version;
           contents = [
             app
+            pkgs.busybox
             pkgs.cacert
             pkgs.dockerTools.fakeNss
+            pkgs.sqlite
           ];
           config = {
             Cmd = ["${app}/bin/${pname}"];
+            User = "65532:65532";
             Env = [
               "PORT=7883"
               "DB_URL=/var/db/prod.db"
@@ -107,11 +120,26 @@
               "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
             ];
             ExposedPorts."7883/tcp" = {};
-            Volumes."/var/db" = {};
+            Volumes."/data" = {};
             WorkingDir = "${app}/share/${pname}";
           };
         };
         formatter = pkgs.alejandra;
+        preCommitCheck = git-hooks.lib.${system}.run {
+          package = pkgs.prek;
+          src = ./.;
+          hooks = {
+            actionlint.enable = true;
+            alejandra.enable = true;
+            check-added-large-files.enable = true;
+            check-merge-conflicts.enable = true;
+            check-yaml.enable = true;
+            end-of-file-fixer.enable = true;
+            gofmt.enable = true;
+            shellcheck.enable = true;
+            trim-trailing-whitespace.enable = true;
+          };
+        };
       in {
         packages = {
           default = app;
@@ -133,15 +161,19 @@
           build = app;
           tests = mkGoCheck "tests" "go test ./...";
           vet = mkGoCheck "vet" "go vet ./...";
+          pre-commit = preCommitCheck;
         };
 
         devShells.default = pkgs.mkShell {
-          packages = [
-            pkgs.bun
-            pkgs.bun2nix
-            pkgs.go
-            pkgs.alejandra
-          ];
+          packages =
+            [
+              pkgs.bun
+              pkgs.bun2nix
+              pkgs.go
+              pkgs.alejandra
+            ]
+            ++ preCommitCheck.enabledPackages;
+          shellHook = preCommitCheck.shellHook;
         };
 
         inherit formatter;
