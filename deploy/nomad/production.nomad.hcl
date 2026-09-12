@@ -49,9 +49,7 @@ job "htmx-go" {
       mode = "host"
 
       port "http" {
-        static       = 9122
-        to           = 7883
-        host_network = "loopback"
+        to = 7883
       }
     }
 
